@@ -1,4 +1,5 @@
 <?php
+//Connexion base de données
 require_once 'connect.php';
 $order = '';
 if (isset($_GET['order']) && isset($_GET['column'])) {
@@ -16,41 +17,42 @@ if (isset($_GET['order']) && isset($_GET['column'])) {
         $order .= ' DESC';
     }
 }
+//Methode d'inscription
 if (!empty($_POST)) {
     foreach ($_POST as $key => $value) {
-        $post[$key] = strip_tags(trim($value));
+        $_POST[$key] = strip_tags(trim($value));
     }
-
-    if (strlen($post['firstname'] < 3)) {
+//Types d'erreur pouvant être rencontrés lors de l'inscription
+    if (strlen($_POST['firstname'] < 3)) {
         $errors[] = 'Le prénom doit comporter au moins 3 caractères';
     }
-    if (strlen($post['lastname'] < 3)) {
+    if (strlen($_POST['lastname'] < 3)) {
         $errors[] = 'Le nom doit comporter au moins 3 caractères';
     }
-    if (!filter_variable($post['email'], FILTER_VALIDATE_EMAIL)) {
+    if (!filter_variable($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         $errors[] = 'L\'adresse email est invalide';
     }
-    if (empty($post['birthdate'])) {
+    if (empty($_POST['birthdate'])) {
         $errors[] = 'La date de naissance doit être complétée';
     }
-    if (empty($post['city'])) {
+    if (empty($_POST['city'])) {
         $errors[] = 'La ville ne peut être vide';
     }
     if (count($error) > 0) {
         // error = 0 = insertion user
             $insertUser = $db->prepare('INSERT INTO users (gender, firstname, lastname, email, birthdate, city) VALUES(:gender, :firstname, :lastname, :email, :birthdate, :city)');
-            $insertUser->bindValue(':gender', $post['gender']);
-            $insertUser->bindValue(':firstname', $post['fistname']);
-            $insertUser->bindValue(':lastname', $post['lastname']);
-            $insertUser->bindValue(':email', $post['email']);
-             $insertUser->bindValue(':birthdate', date('Y-m-d', strtotime($post['birthdate'])));
-            $insertUser->bindValue(':city', $post['city']);
+            $insertUser->bindValue(':gender', $_POST['gender']);
+            $insertUser->bindValue(':firstname', $_POST['firstname']);
+            $insertUser->bindValue(':lastname', $_POST['lastname']);
+            $insertUser->bindValue(':email', $_POST['email']);
+             $insertUser->bindValue(':birthdate', date('Y-m-d', strtotime($_POST['birthdate'])));
+            $insertUser->bindValue(':city', $_POST['city']);
     if ($insertUser->execute()) {
             $createUser = true;
         } else {
             $errors[] = 'Erreur SQL';
         }
-
+//Insertion dans la base de données
             $queryUsers = $db->prepare('SELECT * FROM users' . $order);
     if ($queryUsers->execute()) {
             $users = $queryUsers-- > fetchAll();
@@ -90,7 +92,7 @@ if (!empty($_POST)) {
         }
         if (empty($errors)) {
             echo '<div class="col-md-6 col-md-offset-3">';
-            echo '<div class="alert alert-danger">' . implode('<br>', $errors) . '</div>';
+            echo '<div class="alert alert-danger">' .implode('<br>', $errors) . '</div>';
             echo '</div><br>';
         }
         ?>
