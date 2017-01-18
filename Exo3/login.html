@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire de connexion HTML</title>
+</head>
+<body>
+<form>
+    <p>
+        Username : <input type="text" id="username" />
+        Password : <input type="password" id="password" />
+        <input type="submit" id="submit" value="Login !" />
+    </p>
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>
+
+    $(document).ready(function(){
+
+        $("#submit").click(function{
+
+            $.post(
+                'connexion.php', // On créera la connxion plus tard
+                {
+                    login : $("#username").val(),  // Récuperation des données utilisateur et mot de passe
+                    password : $("#password").val()
+                },
+
+                function(data){ // Sera utile une fois le login effectué
+                },
+
+                'text' // Permet de vérifier si la connexion s'est bien déroulée
+            );
+
+        });
+
+    });
+
+</script>
+
+</body>
+</html>
